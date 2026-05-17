@@ -1,0 +1,50 @@
+services:
+  postgres:
+    image: postgres:16
+
+    container_name: department_postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: departments
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d departments"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+
+    container_name: department_api
+
+    restart: unless-stopped
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    env_file:
+      - .env
+
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/departments
+
+    ports:
+      - "8000:8000"
+
+    volumes:
+      - .:/app
+
+volumes:
+  postgres_data:
