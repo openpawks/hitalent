@@ -1,9 +1,7 @@
 services:
   postgres:
     image: postgres:16
-
     container_name: department_postgres
-
     restart: unless-stopped
 
     environment:
@@ -25,17 +23,12 @@ services:
 
   app:
     build: .
-
     container_name: department_api
-
     restart: unless-stopped
 
     depends_on:
       postgres:
         condition: service_healthy
-
-    env_file:
-      - .env
 
     environment:
       DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/departments

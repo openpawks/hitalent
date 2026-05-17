@@ -7,7 +7,9 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
     )
 
-    database_url: str
+    database_url: str = (
+        "postgresql+asyncpg://postgres:postgres@localhost:5432/departments"
+    )
 
     max_tree_depth: int = 5
 
